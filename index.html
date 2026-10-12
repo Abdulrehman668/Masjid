@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لیسر منجھلا</title>
+<style>
+:root{--green:#176b4d;--green2:#e8f5ee;--ink:#17231d;--muted:#68756e;--line:#dce6df;--bg:#f5f8f6;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,"Noto Nastaliq Urdu",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+header{background:linear-gradient(135deg,#12563e,#21815c);color:#fff;padding:22px 16px 18px}
+header h1{font-size:23px;margin:0 0 4px}header p{margin:0;color:#e4f4eb;font-size:13px}
+main{max-width:1050px;margin:auto;padding:14px}
+.notice{background:#fff7df;border:1px solid #f0d68a;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:14px;box-shadow:0 2px 8px #173d2910}
+.card small{display:block;color:var(--muted);font-size:12px}.card strong{font-size:21px;display:block;margin-top:5px;overflow-wrap:anywhere}
+.tabs{display:flex;gap:8px;overflow:auto;padding:3px 0 12px}
+button,.tab{font-family:inherit;border:0;border-radius:10px;padding:10px 13px;background:#e8eee9;color:var(--ink);font-size:14px;cursor:pointer;white-space:nowrap}
+button.primary,.tab.active{background:var(--green);color:#fff}
+button.danger{background:#fff0ef;color:var(--red)}button.outline{background:white;border:1px solid var(--line)}
+.panel{margin-bottom:14px}.panel h2{font-size:18px;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:13px;color:#435249;margin-bottom:5px}
+input,select,textarea{width:100%;border:1px solid #ccd9d0;border-radius:9px;padding:11px;font:inherit;font-size:14px;background:white;color:var(--ink)}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{background:#f0f6f2;color:#355344} .tablewrap{overflow:auto}
+.empty{text-align:center;color:var(--muted);padding:22px}
+.pill{display:inline-block;border-radius:20px;padding:2px 8px;font-size:11px;background:var(--green2);color:var(--green)}
+.hidden{display:none!important}.muted{color:var(--muted);font-size:12px}.sectiontitle{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+@media(max-width:720px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr 1fr}header h1{font-size:20px}.card strong{font-size:19px}}
+@media(max-width:420px){.formgrid{grid-template-columns:1fr}.actions button{flex:1}}
+@media print{header,.tabs,.no-print,.notice{display:none!important}body{background:white}main{max-width:none;padding:0}.panel,.card{box-shadow:none;break-inside:avoid}.cards{grid-template-columns:repeat(4,1fr)}}
+.maker{font-size:10px;color:#68756e;text-align:center;padding:8px 4px}\n</style>
+</head>
+<body>
+<header>
+  <h1>لیسر منجھلا</h1>
+  <p>مسجد، مدرسہ اور قبرستان کا الگ الگ حساب</p>
+</header>
+<main>
+<div class="notice">اہم: یہ ابتدائی ورژن اسی براؤزر/موبائل میں ڈیٹا محفوظ کرتا ہے۔ براؤزر کا ڈیٹا صاف کرنے یا موبائل تبدیل کرنے سے پہلے بیک اَپ ڈاؤن لوڈ کر لیں۔</div>
+<div class="cards">
+ <div class="card"><small>مجموعی موجودہ بیلنس</small><strong id="allBalance">روپے 0</strong></div>
+ <div class="card"><small>کل چندہ / آمدن</small><strong id="allIncome">روپے 0</strong></div>
+ <div class="card"><small>کل اخراجات</small><strong id="allExpense">روپے 0</strong></div>
+ <div class="card"><small>اس ماہ کی آمدن</small><strong id="monthIncome">روپے 0</strong></div>
+</div>
+<div class="tabs no-print" id="tabs">
+ <button class="tab active" data-page="dashboard">ڈیش بورڈ</button>
+ <button class="tab" data-page="add">چندہ / خرچ درج کریں</button>
+ <button class="tab" data-page="ledger">تمام اندراجات</button>
+ <button class="tab" data-page="report">ماہانہ رپورٹ / PDF</button>
+ <button class="tab" data-page="people">چندہ دینے والے</button>
+ <button class="tab" data-page="backup">بیک اَپ</button>
+</div>
+
+<section id="page-dashboard">
+ <div class="panel">
+  <h2>تینوں اداروں کا الگ الگ حساب</h2>
+  <div class="grid2" id="accountCards"></div>
+ </div>
+ <div class="panel">
+  <h2>حالیہ اندراجات</h2>
+  <div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>ادارہ</th><th>قسم</th><th>نام / تفصیل</th><th>رقم</th></tr></thead><tbody id="recentRows"></tbody></table></div>
+ </div>
+</section>
+
+<section id="page-add" class="hidden">
+ <div class="panel">
+  <h2>نیا چندہ یا خرچ درج کریں</h2>
+  <form id="entryForm">
+   <div class="formgrid">
+    <div><label for="date">تاریخ</label><input id="date" type="date" required></div>
+    <div><label for="account">ادارہ</label><select id="account"><option>مسجد</option><option>مدرسہ</option><option>قبرستان</option></select></div>
+    <div><label for="kind">اندراج کی قسم</label><select id="kind"><option value="income">چندہ / آمدن</option><option value="expense">خرچ</option></select></div>
+    <div id="donorField"><label for="donor">چندہ دینے والے کا نام</label><input id="donor" placeholder="مثلاً محمد احمد"></div>
+    <div><label for="amount">رقم (روپے)</label><input id="amount" type="number" min="1" step="1" required placeholder="مثلاً 5000"></div>
+    <div><label for="category">مد / خرچ کی قسم</label><input id="category" placeholder="مثلاً بجلی بل، تعمیر، تنخواہ"></div>
+   </div>
+   <div style="margin-top:11px"><label for="detail">تفصیل / نوٹ</label><textarea id="detail" rows="2" placeholder="ضروری اضافی تفصیل"></textarea></div>
+   <div class="actions"><button class="primary" type="submit">اندراج محفوظ کریں</button><button type="reset" class="outline">فارم صاف کریں</button></div>
+  </form>
+ </div>
+</section>
+
+<section id="page-ledger" class="hidden">
+ <div class="panel">
+  <div class="sectiontitle"><h2>تمام اندراجات</h2><button class="outline no-print" onclick="renderLedger()">تازہ کریں</button></div>
+  <div class="formgrid no-print" style="margin-bottom:12px">
+   <div><label for="filterAccount">ادارہ</label><select id="filterAccount"><option value="">تمام ادارے</option><option>مسجد</option><option>مدرسہ</option><option>قبرستان</option></select></div>
+   <div><label for="filterKind">قسم</label><select id="filterKind"><option value="">تمام</option><option value="income">چندہ / آمدن</option><option value="expense">خرچ</option></select></div>
+   <div><label for="filterMonth">مہینہ</label><input id="filterMonth" type="month"></div>
+  </div>
+  <div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>ادارہ</th><th>قسم</th><th>نام / مد</th><th>تفصیل</th><th>رقم</th><th class="no-print">عمل</th></tr></thead><tbody id="ledgerRows"></tbody></table></div>
+ </div>
+</section>
+
+<section id="page-report" class="hidden">
+ <div class="panel">
+  <h2>ماہانہ حساب اور PDF رپورٹ</h2>
+  <div class="formgrid no-print">
+   <div><label for="reportMonth">مہینہ منتخب کریں</label><input id="reportMonth" type="month"></div>
+   <div><label for="reportAccount">ادارہ منتخب کریں</label><select id="reportAccount"><option value="">تینوں ادارے</option><option>مسجد</option><option>مدرسہ</option><option>قبرستان</option></select></div>
+   <div style="align-self:end"><button class="primary" onclick="renderReport()">رپورٹ دکھائیں</button></div>
+  </div>
+  <div id="reportOutput"></div>
+  <div class="actions no-print"><button class="primary" onclick="printReport()">PDF بنائیں / پرنٹ کریں</button></div>
+  <p class="muted no-print">بٹن دبانے کے بعد پرنٹ ونڈو میں “Save as PDF” منتخب کریں۔ موبائل میں یہ آپشن پرنٹ مینو میں ہو سکتا ہے۔</p>
+ </div>
+</section>
+
+<section id="page-people" class="hidden">
+ <div class="panel">
+  <h2>چندہ دینے والوں کی فہرست</h2>
+  <p class="muted">نام خود بخود چندہ اندراجات سے جمع کیے جاتے ہیں۔ کسی نام پر کلک کرنے سے اس کی تفصیل تلاش کر سکتے ہیں۔</p>
+  <div class="formgrid no-print"><div><label for="personSearch">نام تلاش کریں</label><input id="personSearch" placeholder="نام لکھیں"></div></div>
+  <div class="tablewrap"><table><thead><tr><th>نام</th><th>مسجد کا چندہ</th><th>مدرسہ کا چندہ</th><th>قبرستان کا چندہ</th><th>کل چندہ</th></tr></thead><tbody id="peopleRows"></tbody></table></div>
+ </div>
+</section>
+
+<section id="page-backup" class="hidden">
+ <div class="panel">
+  <h2>ڈیٹا بیک اَپ اور بحالی</h2>
+  <p>بیک اَپ فائل میں تمام چندے اور اخراجات محفوظ ہوں گے۔ اسے کسی محفوظ جگہ پر رکھیں۔ بحالی سے موجودہ ڈیٹا تبدیل ہو جائے گا۔</p>
+  <div class="actions"><button class="primary" onclick="backup()">بیک اَپ ڈاؤن لوڈ کریں</button><label class="outline" style="padding:9px 12px;border-radius:10px;cursor:pointer">بیک اَپ بحال کریں <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreBackup(event)"></label></div>
+  <p class="muted">تجویز: ہر ماہ رپورٹ کے ساتھ بیک اَپ بھی محفوظ کریں۔</p>
+ </div>
+</section>
+<footer class="maker">ایپ تیار کرنے والے: رانا عبدالرحمن سرور</footer>
+</main>
+<script>
+const KEY='masjidMadarsaJanazgahLedgerV1';
+const accounts=['مسجد','مدرسہ','قبرستان'];
+let entries=[];
+const $=id=>document.getElementById(id);
+const money=n=>'روپے '+Number(n||0).toLocaleString('en-PK',{maximumFractionDigits:0});
+const today=()=>new Date().toISOString().slice(0,10);
+const monthNow=()=>today().slice(0,7);
+function load(){try{entries=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(entries))entries=[]}catch(e){entries=[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(entries));renderAll()}
+function total(list,kind){return list.filter(x=>!kind||x.kind===kind).reduce((s,x)=>s+Number(x.amount||0),0)}
+function balance(list){return total(list,'income')-total(list,'expense')}
+function isMonth(x,m){return !m||x.date.startsWith(m)}
+function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function typeName(k){return k==='income'?'چندہ / آمدن':'خرچ'}
+function showPage(p){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$('page-'+p).classList.remove('hidden');document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.page===p));if(p==='ledger')renderLedger();if(p==='report')renderReport();if(p==='people')renderPeople();if(p==='dashboard')renderDashboard()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+$('date').value=today();$('reportMonth').value=monthNow();$('filterMonth').value=monthNow();
+$('kind').addEventListener('change',()=>{$('donorField').classList.toggle('hidden',$('kind').value==='expense');$('donor').required=$('kind').value==='income'});
+$('entryForm').addEventListener('submit',e=>{e.preventDefault();const kind=$('kind').value;const amount=Number($('amount').value);if(!Number.isFinite(amount)||amount<=0){alert('درست رقم درج کریں');return}if(kind==='income'&&!$('donor').value.trim()){alert('چندہ دینے والے کا نام درج کریں');return}entries.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),date:$('date').value,account:$('account').value,kind,donor:kind==='income' ? $('donor').value.trim() : '',amount,category:$('category').value.trim(),detail:$('detail').value.trim()});save();$('entryForm').reset();$('date').value=today();$('donorField').classList.remove('hidden');$('donor').required=true;alert('اندراج محفوظ ہوگیا');showPage('dashboard')});
+function renderDashboard(){
+ const inc=total(entries,'income'),exp=total(entries,'expense'),m=monthNow();
+ $('allBalance').textContent=money(inc-exp);$('allIncome').textContent=money(inc);$('allExpense').textContent=money(exp);$('monthIncome').textContent=money(total(entries.filter(x=>isMonth(x,m)),'income'));
+ $('accountCards').innerHTML=accounts.map(a=>{let l=entries.filter(x=>x.account===a),mi=total(l.filter(x=>isMonth(x,m)),'income'),me=total(l.filter(x=>isMonth(x,m)),'expense');return `<div class="card"><small>${a} — موجودہ بیلنس</small><strong>${money(balance(l))}</strong><small>کل چندہ: ${money(total(l,'income'))}</small><small>کل خرچ: ${money(total(l,'expense'))}</small><small>اس ماہ آمدن: ${money(mi)} | خرچ: ${money(me)}</small></div>`}).join('');
+ const recent=[...entries].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);$('recentRows').innerHTML=recent.length?recent.map(x=>`<tr><td>${safe(x.date)}</td><td>${safe(x.account)}</td><td>${typeName(x.kind)}</td><td>${safe(x.donor||x.category||'—')}</td><td>${money(x.amount)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">ابھی کوئی اندراج نہیں۔ چندہ یا خرچ درج کرنے کے لیے اوپر بٹن منتخب کریں۔</td></tr>';
+}
+function renderLedger(){let list=[...entries];const a=$('filterAccount').value,k=$('filterKind').value,m=$('filterMonth').value;if(a)list=list.filter(x=>x.account===a);if(k)list=list.filter(x=>x.kind===k);if(m)list=list.filter(x=>isMonth(x,m));list.sort((a,b)=>b.date.localeCompare(a.date));$('ledgerRows').innerHTML=list.length?list.map(x=>`<tr><td>${safe(x.date)}</td><td>${safe(x.account)}</td><td>${typeName(x.kind)}</td><td>${safe(x.donor||x.category||'—')}</td><td>${safe(x.detail||'—')}</td><td>${money(x.amount)}</td><td class="no-print"><button class="danger" onclick="deleteEntry('${x.id}')">حذف</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">اس فلٹر میں کوئی اندراج نہیں۔</td></tr>'}
+['filterAccount','filterKind','filterMonth'].forEach(id=>$(id).addEventListener('change',renderLedger));
+function deleteEntry(id){if(confirm('کیا آپ یہ اندراج حذف کرنا چاہتے ہیں؟')){entries=entries.filter(x=>x.id!==id);save();renderLedger()}}
+function renderPeople(){let q=($('personSearch').value||'').trim().toLowerCase();let names=[...new Set(entries.filter(x=>x.kind==='income').map(x=>x.donor).filter(Boolean))].filter(n=>n.toLowerCase().includes(q)).sort((a,b)=>a.localeCompare(b,'ur'));$('peopleRows').innerHTML=names.length?names.map(n=>{let vals=accounts.map(a=>total(entries.filter(x=>x.kind==='income'&&x.donor===n&&x.account===a)));return `<tr><td>${safe(n)}</td>${vals.map(v=>`<td>${money(v)}</td>`).join('')}<td><b>${money(vals.reduce((s,v)=>s+v,0))}</b></td></tr>`}).join(''):'<tr><td colspan="5" class="empty">ابھی چندہ دینے والوں کا ریکارڈ نہیں۔</td></tr>'}
+$('personSearch').addEventListener('input',renderPeople);
+function renderReport(){const m=$('reportMonth').value||monthNow(),a=$('reportAccount').value;let list=entries.filter(x=>isMonth(x,m)&&(!a||x.account===a)).sort((x,y)=>x.date.localeCompare(y.date));const inc=total(list,'income'),exp=total(list,'expense');const prior=entries.filter(x=>x.date.slice(0,7)<m&&(!a||x.account===a));const opening=balance(prior);let rows=list.map(x=>`<tr><td>${safe(x.date)}</td><td>${safe(x.account)}</td><td>${typeName(x.kind)}</td><td>${safe(x.donor||x.category||'—')}</td><td>${safe(x.detail||'—')}</td><td>${money(x.amount)}</td></tr>`).join('');$('reportOutput').innerHTML=`<div id="printArea"><h2 style="text-align:center;margin-top:18px">ماہانہ مالی رپورٹ</h2><p><b>مہینہ:</b> ${safe(m)} &nbsp; <b>ادارہ:</b> ${a?safe(a):'تمام ادارے'}</p><div class="cards"><div class="card"><small>پچھلا بیلنس</small><strong>${money(opening)}</strong></div><div class="card"><small>اس ماہ آمدن</small><strong>${money(inc)}</strong></div><div class="card"><small>اس ماہ اخراجات</small><strong>${money(exp)}</strong></div><div class="card"><small>اختتامی بیلنس</small><strong>${money(opening+inc-exp)}</strong></div></div><div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>ادارہ</th><th>قسم</th><th>نام / مد</th><th>تفصیل</th><th>رقم</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">اس مہینے کوئی اندراج نہیں۔</td></tr>'}</tbody></table></div><p><b>کل آمدن:</b> ${money(inc)} &nbsp; <b>کل خرچ:</b> ${money(exp)} &nbsp; <b>آخری بیلنس:</b> ${money(opening+inc-exp)}</p><p style="margin-top:28px">حساب تیار کرنے والے کے دستخط: __________________ &nbsp; تصدیق: __________________</p></div>`}
+function printReport(){renderReport();const content=$('reportOutput').innerHTML;const w=window.open('','_blank');if(!w){alert('پاپ اَپ بند ہے۔ براہ کرم براؤزر کی پرنٹ سہولت استعمال کریں۔');window.print();return}w.document.write(`<!doctype html><html lang="ur" dir="rtl"><head><meta charset="utf-8"><title>ماہانہ مالی رپورٹ</title><style>body{font-family:Tahoma,Arial,sans-serif;padding:20px;line-height:1.7;color:#17231d}h2{text-align:center}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #bbb;padding:7px;text-align:right}th{background:#eee}.cards{display:flex;gap:10px;margin:14px 0}.card{flex:1;border:1px solid #bbb;padding:10px}.card small{display:block}.card strong{font-size:17px}.muted{color:#555}@media print{button{display:none}}.maker{font-size:10px;color:#68756e;text-align:center;padding:8px 4px}\n</style></head><body>${content}<script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);w.document.close()}
+function backup(){const blob=new Blob([JSON.stringify({app:'MasjidMadarsaJanazgah',version:1,exportedAt:new Date().toISOString(),entries},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='masjid-hisaab-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url)}
+function restoreBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);const list=Array.isArray(data)?data:data.entries;if(!Array.isArray(list)||!list.every(x=>x.date&&accounts.includes(x.account)&&['income','expense'].includes(x.kind)&&Number(x.amount)>0))throw Error('bad');if(confirm('موجودہ ریکارڈ کی جگہ بیک اَپ کا ریکارڈ بحال ہوگا۔ جاری رکھیں؟')){entries=list;save();alert('بیک اَپ بحال ہوگیا')}}catch(e){alert('یہ درست بیک اَپ فائل نہیں ہے۔')}ev.target.value=''};r.readAsText(f)}
+function renderAll(){renderDashboard();if(!$('page-ledger').classList.contains('hidden'))renderLedger();if(!$('page-report').classList.contains('hidden'))renderReport();if(!$('page-people').classList.contains('hidden'))renderPeople()}
+load();renderAll();
+</script>
+</body>
+</html>
